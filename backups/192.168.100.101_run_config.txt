@@ -1,0 +1,171 @@
+Building configuration...
+
+  
+Current configuration : 1786 bytes
+!
+! Last configuration change at 08:53:44 EST Tue Jul 13 2021 by tomw
+!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+aaa authorization exec default local 
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+clock timezone EST -5 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+ip domain name py.local
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+username tomw privilege 15 password 7 0702131B4659342553
+!
+redundancy
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ description routerID
+ ip address 1.1.1.1 255.255.255.255
+!
+interface Ethernet0/0
+ description to R2
+ ip address 10.1.12.1 255.255.255.252
+ duplex auto
+!
+interface Ethernet0/1
+ description Net1
+ ip address 10.1.1.1 255.255.255.0
+ duplex auto
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet1/3
+ description management
+ ip address 192.168.100.101 255.255.255.0
+ duplex auto
+!
+router ospf 10
+ router-id 1.1.1.1
+ network 10.1.1.0 0.0.0.255 area 1
+ network 10.1.12.0 0.0.0.3 area 1
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 192.168.0.0 255.255.255.0 192.168.100.1
+ip ssh version 2
+!
+ipv6 ioam timestamp
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ transport input ssh
+!
+!
+end
