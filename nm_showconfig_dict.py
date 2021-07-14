@@ -12,18 +12,19 @@ R1 = {
     'password': 'mR7h0M@$',
 }
 
-device = ConnectHandler(**R1)
-
-print(device.send_command('show ip int br'))
-
-config_command = (
-    'int lo1',
-    'desc Test Loopback',
-    'ip add 1.1.1.2 255.255.255.255',
-    'do wr',
-    )
-print(device.send_config_set(config_command))
-
-device.disconnect()
+# device = ConnectHandler(**R1)
+# 
+# print(device.send_command('show ip int br'))
+# 
+# config_command = (
+#     'int lo1',
+#     'desc Test Loopback',
+#     'ip add 1.1.1.2 255.255.255.255',
+#     'do wr',
+#     )
+# print(device.send_config_set(config_command))
+# 
+# device.disconnect()
+print(R1)
 
 

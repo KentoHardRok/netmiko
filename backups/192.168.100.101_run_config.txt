@@ -1,9 +1,10 @@
+
 Building configuration...
 
   
-Current configuration : 1786 bytes
+Current configuration : 1871 bytes
 !
-! Last configuration change at 08:53:44 EST Tue Jul 13 2021 by tomw
+! Last configuration change at 08:08:08 EST Wed Jul 14 2021 by tomw
 !
 version 15.7
 service timestamps debug datetime msec
@@ -92,6 +93,10 @@ redundancy
 interface Loopback0
  description routerID
  ip address 1.1.1.1 255.255.255.255
+!
+interface Loopback1
+ description Test Loopback
+ ip address 1.1.1.2 255.255.255.255
 !
 interface Ethernet0/0
  description to R2
