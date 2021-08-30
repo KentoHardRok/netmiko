@@ -1,176 +1,141 @@
-
-Building configuration...
-
-  
-Current configuration : 1871 bytes
-!
-! Last configuration change at 08:08:08 EST Wed Jul 14 2021 by tomw
-!
-version 15.7
-service timestamps debug datetime msec
-service timestamps log datetime msec
-service password-encryption
-!
-hostname R1
-!
-boot-start-marker
-boot-end-marker
-!
-!
-!
-aaa new-model
-!
-!
-aaa authentication login default local
-aaa authorization exec default local 
-!
-!
-!
-!
-!
-aaa session-id common
-!
-!
-!
-clock timezone EST -5 0
-mmi polling-interval 60
-no mmi auto-configure
-no mmi pvc
-mmi snmp-timeout 180
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-
-
-!
-!
-!
-!
-ip domain name py.local
-ip cef
-no ipv6 cef
-!
-multilink bundle-name authenticated
-!
-!
-!
-!
-!
-!
-!
-!
-!
-username tomw privilege 15 password 7 0702131B4659342553
-!
-redundancy
-!
-!
-! 
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-interface Loopback0
- description routerID
- ip address 1.1.1.1 255.255.255.255
-!
-interface Loopback1
- description Test Loopback
- ip address 1.1.1.2 255.255.255.255
-!
-interface Ethernet0/0
- description to R2
- ip address 10.1.12.1 255.255.255.252
- duplex auto
-!
-interface Ethernet0/1
- description Net1
- ip address 10.1.1.1 255.255.255.0
- duplex auto
-!
-interface Ethernet0/2
- no ip address
- shutdown
- duplex auto
-!
-interface Ethernet0/3
- no ip address
- shutdown
- duplex auto
-!
-interface Ethernet1/0
- no ip address
- shutdown
- duplex auto
-!
-interface Ethernet1/1
- no ip address
- shutdown
- duplex auto
-!
-interface Ethernet1/2
- no ip address
- shutdown
- duplex auto
-!
-interface Ethernet1/3
- description management
- ip address 192.168.100.101 255.255.255.0
- duplex auto
-!
-router ospf 10
- router-id 1.1.1.1
- network 10.1.1.0 0.0.0.255 area 1
- network 10.1.12.0 0.0.0.3 area 1
-!
-ip forward-protocol nd
-!
-!
-no ip http server
-no ip http secure-server
-ip route 192.168.0.0 255.255.255.0 192.168.100.1
-ip ssh version 2
-!
-ipv6 ioam timestamp
-!
-!
-!
-!
-!
-control-plane
-!
-!
-!
-!
-!
-!
-!
-!
-line con 0
- logging synchronous
-line aux 0
-line vty 0 4
- transport input ssh
-!
-!
-end
+## Last commit: 2021-07-30 23:35:47 EDT by root
+version 18.1R1.9;
+system {
+    host-name SP1;
+    time-zone America/New_York;
+    root-authentication {
+        encrypted-password "$6$STUILXQJ$OssMka42Qa68XDPkB1275oHfuBAN/ipBHozDNelxYNQbOH.bQAq1qfoIV2SdehuBClAFEbZJxWGynyiPAMMcj."; ## SECRET-DATA
+    }
+    login {
+        user tomw {
+            full-name "tom wilent";
+            uid 2000;
+            class super-user;
+            authentication {
+                encrypted-password "$6$779oLIRr$oS43fyxsdbPxaCtXG9a.7Y1zQeGZlLvuT2pFbEnoQPlJMGccMvNvWmRLKmr0Oydvz1we6bcAdFcTr77PKJ5UK0"; ## SECRET-DATA
+            }
+        }
+    }
+    services {
+        ssh;
+    }
+    syslog {
+        inactive: user * {
+            any emergency;
+        }
+        file messages {
+            any notice;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+    processes {
+        dhcp-service {
+            traceoptions {
+                file dhcp_logfile size 10m;
+                level all;
+                flag all;
+            }
+        }
+    }
+}
+interfaces {
+    interface-range local {
+        member-range ge-0/0/0 to ge-0/0/3;
+        mtu 9000;
+    }
+    ge-0/0/0 {
+        unit 0 {
+            family inet {
+                address 192.168.11.1/30;
+            }
+        }
+    }
+    ge-0/0/1 {
+        unit 0 {
+            family inet {
+                address 192.168.12.1/30;
+            }
+        }
+    }
+    ge-0/0/2 {
+        unit 0 {
+            family inet {
+                address 192.168.13.1/30;
+            }
+        }
+    }
+    ge-0/0/3 {
+        unit 0 {
+            family inet {
+                address 192.168.14.1/30;
+            }
+        }
+    }
+    ge-0/0/9 {
+        unit 0 {
+            family inet {
+                address 192.168.100.101/24;
+            }
+        }
+    }
+    fxp0 {
+        unit 0 {
+            family inet {
+                dhcp {
+                    vendor-id Juniper-vmx-VM60C411927B;
+                }
+            }
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 1.1.1.1/32;
+            }
+        }
+    }
+}
+routing-options {
+    static {
+        route 192.168.0.0/24 next-hop 192.168.100.1;
+    }
+    router-id 1.1.1.1;
+    autonomous-system 65001;
+}
+protocols {
+    bgp {
+        group alpha {
+            type internal;
+            local-address 1.1.1.1;
+            family evpn {
+                signaling;
+            }
+            export send-ospf;
+            cluster 1.1.1.1;
+            peer-as 65001;
+            neighbor 1.1.2.1;
+            neighbor 1.1.2.2;
+            neighbor 1.1.2.3;
+            neighbor 1.1.2.4;
+        }
+    }
+    ospf {
+        area 0.0.0.0 {
+            interface lo0.0 {
+                passive;
+            }
+            interface local;
+        }
+    }
+}
+policy-options {
+    policy-statement send-ospf {
+        term 2 {
+            from protocol ospf;
+            then accept;
+        }
+    }
+}
